@@ -4,13 +4,12 @@ on:
     - cron: '0 0 10 * *' 
 
 jobs:
-  build_image:
+  build:
     name: Build RPi4 AArch64 Image
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
       - name: Install prerequisites
         run: |
           sudo apt update
@@ -93,8 +92,7 @@ jobs:
           path: "*.zip"
           retention-days: 30
       
-      - name: Create Release (Optional)
-        if: github.event_name == 'schedule'
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "v${{ env.TIMESTAMP }}"
