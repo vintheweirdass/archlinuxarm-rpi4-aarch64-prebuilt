@@ -18,10 +18,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Free Disk Space (Ubuntu)
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.disable_free_disk_space != 'true')
-        uses: jlumbroso/free-disk-space@v1.3.1
-      
-      - name: Free Disk Space (Ubuntu)
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.disable_free_disk_space == false)
         uses: jlumbroso/free-disk-space@v1.3.1
       
       - name: Install prerequisites
