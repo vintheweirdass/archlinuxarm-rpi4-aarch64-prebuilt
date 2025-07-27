@@ -1,0 +1,109 @@
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 10 * *' 
+
+jobs:
+  build_image:
+    name: Build RPi4 AArch64 Image
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+      
+      - name: Install prerequisites
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            qemu-user-static \
+            binfmt-support \
+            parted \
+            bsdtar \
+            dosfstools \
+            gzip \
+            zip
+      
+      - name: Build Raspberry Pi4 AArch64 Image
+        run: |
+          set -euxo pipefail
+          
+          # Generate timestamp
+          TIMESTAMP=$(date +%Y-%m)
+          IMG_NAME="rpi4-arch-arm64-${TIMESTAMP}.img"
+          
+          # Create and partition image
+          fallocate -l 8G "$IMG_NAME"
+          parted "$IMG_NAME" --script mklabel msdos \
+            mkpart primary fat32 1MiB 101MiB \
+            mkpart primary ext4 101MiB 100%
+          
+          # Setup loop device
+          LOOP=$(sudo losetup --show -Pf "$IMG_NAME")
+          sudo mkfs.vfat "${LOOP}p1"
+          sudo mkfs.ext4 "${LOOP}p2"
+          
+          # Mount partitions
+          mkdir -p boot rootfs
+          sudo mount "${LOOP}p1" boot
+          sudo mount "${LOOP}p2" rootfs
+          
+          # Download and verify rootfs
+          echo "Downloading Arch Linux ARM rootfs..."
+          curl -fsSL http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz \
+            -o rootfs.tar.gz
+          
+          # Verify download succeeded
+          if [ ! -f rootfs.tar.gz ] || [ ! -s rootfs.tar.gz ]; then
+            echo "Failed to download rootfs"
+            exit 1
+          fi
+          
+          # Extract rootfs
+          sudo bsdtar -xpf rootfs.tar.gz -C rootfs
+          sudo mv rootfs/boot/* boot/
+          
+          # Fix fstab for RPi (assuming SD card shows as mmcblk1)
+          sudo sed -i 's/mmcblk0/mmcblk1/g' rootfs/etc/fstab
+          
+          # Cleanup
+          sync
+          sudo umount boot rootfs || true
+          sudo losetup -d "$LOOP" || true
+          
+          # Create compressed versions
+          echo "Creating compressed archives..."
+          gzip -k "$IMG_NAME"
+          zip "${IMG_NAME%.img}.zip" "$IMG_NAME"
+          
+          # Set output variables for artifact upload
+          echo "IMG_NAME=${IMG_NAME}" >> $GITHUB_ENV
+          echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
+      
+      - name: Upload Gzipped Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: archlinux-rpi4-aarch64-sdcard
+          path: "*.img.gz"
+          retention-days: 30
+      
+      - name: Upload Zipped Image  
+        uses: actions/upload-artifact@v4
+        with:
+          name: archlinux-rpi4-aarch64-sdcard
+          path: "*.zip"
+          retention-days: 30
+      
+      - name: Create Release (Optional)
+        if: github.event_name == 'schedule'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ env.TIMESTAMP }}"
+          name: "Arch Linux RPi4 AArch64 - ${{ env.TIMESTAMP }}"
+          files: |
+            *.img.gz
+            *.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
