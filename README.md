@@ -6,7 +6,7 @@ I made this repository because I have a pain repartitioning and flashing the sdc
 
 ## Downloading
 
-1. Download one of the Image from the [Releases](https://github.com/vintheweirdass/archlinuxarm-rpi4-aarch64-prebuilt) page.
+1. Download one of the Image (that contains `sdcard.img` on the compressed files) from the [Releases](https://github.com/vintheweirdass/archlinuxarm-rpi4-aarch64-prebuilt) page.
    > The `.zst` ([Zstandard](https://github.com/facebook/zstd)) variant only for more-compressed version.
    > Useful if your internet isn't strong enough to download the normal variant
 3. Unzip the file you have downloaded until the file format is not `.zip`, `.gz`, `.zst`, or other compressed format
