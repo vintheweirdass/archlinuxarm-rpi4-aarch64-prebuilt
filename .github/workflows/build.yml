@@ -29,10 +29,10 @@ jobs:
           
           # Generate timestamp
           TIMESTAMP=$(date +%Y-%m)
-          IMG_NAME="rpi4-arch-arm64-${TIMESTAMP}.img"
+          IMG_NAME="archlinux-rpi4-aarch64-${TIMESTAMP}-sdcard.img"
           
           # Create and partition image
-          fallocate -l 8G "$IMG_NAME"
+          fallocate -l 3G "$IMG_NAME"
           parted "$IMG_NAME" --script mklabel msdos \
             mkpart primary fat32 1MiB 101MiB \
             mkpart primary ext4 101MiB 100%
