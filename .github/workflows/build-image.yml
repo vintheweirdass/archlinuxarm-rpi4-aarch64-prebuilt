@@ -92,14 +92,14 @@ jobs:
       - name: Upload Gzipped Image
         uses: actions/upload-artifact@v4
         with:
-          name: archlinux-rpi4-aarch64-sdcard-gzip
+          name: archlinuxarm-rpi4-aarch64-sdcard-gzip
           path: "*.img.gz"
           retention-days: 30
       
       - name: Upload Zipped Image  
         uses: actions/upload-artifact@v4
         with:
-          name: archlinux-rpi4-aarch64-sdcard-zip
+          name: archlinuxarm-rpi4-aarch64-sdcard-zip
           path: "*.zip"
           retention-days: 30
       
