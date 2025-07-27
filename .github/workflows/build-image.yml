@@ -1,5 +1,11 @@
 on:
   workflow_dispatch:
+    inputs:
+      disable_free_disk_space:
+        description: 'Disable Free Disk Space (speeds up build)'
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: '0 0 10 * *'
 
@@ -10,6 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Free Disk Space (Ubuntu)
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.disable_free_disk_space == false)
+        uses: jlumbroso/free-disk-space@v1.3.1
       
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@v1.3.1
@@ -37,8 +47,8 @@ jobs:
           # Create and partition image
           fallocate -l 8G "$IMG_NAME"
           parted "$IMG_NAME" --script mklabel msdos \
-            mkpart primary fat32 1MiB 101MiB \
-            mkpart primary ext4 101MiB 100%
+            mkpart primary fat32 1MiB 501MiB \
+            mkpart primary ext4 501MiB 100%
           
           # Setup loop device
           LOOP=$(sudo losetup --show -Pf "$IMG_NAME")
