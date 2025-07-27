@@ -1,16 +1,19 @@
 on:
-  schedule:
-    - cron: '0 0 10 * *' 
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 10 * *'
 
 jobs:
   build:
-    name: Build RPi4 AArch64 Image
+    name: Build RPi AArch64 Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+      
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+      
       - name: Install prerequisites
         run: |
           sudo apt update
@@ -18,7 +21,7 @@ jobs:
             qemu-user-static \
             binfmt-support \
             parted \
-            bsdtar \
+            libarchive-tools \
             dosfstools \
             gzip \
             zip
@@ -32,7 +35,7 @@ jobs:
           IMG_NAME="archlinux-rpi4-aarch64-${TIMESTAMP}-sdcard.img"
           
           # Create and partition image
-          fallocate -l 3G "$IMG_NAME"
+          fallocate -l 8G "$IMG_NAME"
           parted "$IMG_NAME" --script mklabel msdos \
             mkpart primary fat32 1MiB 101MiB \
             mkpart primary ext4 101MiB 100%
@@ -59,7 +62,7 @@ jobs:
           fi
           
           # Extract rootfs
-          sudo bsdtar -xpf rootfs.tar.gz -C rootfs
+          sudo tar -xpf rootfs.tar.gz -C rootfs
           sudo mv rootfs/boot/* boot/
           
           # Fix fstab for RPi (assuming SD card shows as mmcblk1)
