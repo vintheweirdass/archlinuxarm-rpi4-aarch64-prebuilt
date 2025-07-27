@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Build RPi AArch64 Image
+    name: Build RPi4 AArch64 Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -38,8 +38,8 @@ jobs:
           set -euxo pipefail
           
           # Generate timestamp
-          TIMESTAMP=$(date +%Y-%m)
-          IMG_NAME="archlinux-rpi4-aarch64-${TIMESTAMP}-sdcard.img"
+          TIMESTAMP=$(date +%Y-%m-%d)
+          IMG_NAME="archlinuxarm-rpi4-aarch64-${TIMESTAMP}-sdcard.img"
           
           # Create and partition image
           fallocate -l 8G "$IMG_NAME"
@@ -83,7 +83,7 @@ jobs:
           # Create compressed versions
           echo "Creating compressed archives..."
           gzip -k "$IMG_NAME"
-          zip "${IMG_NAME%.img}.zip" "$IMG_NAME"
+          zip "$IMG_NAME.zip" "$IMG_NAME"
           
           # Set output variables for artifact upload
           echo "IMG_NAME=${IMG_NAME}" >> $GITHUB_ENV
