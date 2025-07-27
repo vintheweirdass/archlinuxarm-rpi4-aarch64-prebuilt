@@ -2,7 +2,7 @@
 
 This is a prebuilt version of [ArchLinuxARM](https://archlinuxarm.org/) 64-bit version (AArchv8) for Raspberry Pi 4. 
 
-I made this repository because I have a pain repartitioning and flashing the sdcard from the VM (since I was on Windows) all over again
+I made this repository because I have a pain repartitioning and flashing the Arch Linux into sdcard from the VM (since I was on Windows) all over again
 
 ## Downloading
 
