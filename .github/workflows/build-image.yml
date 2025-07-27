@@ -90,13 +90,6 @@ jobs:
           # Set output variables for artifact upload
           echo "IMG_NAME=${IMG_NAME}" >> $GITHUB_ENV
           echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
-          
-      - name: Upload Image
-        uses: actions/upload-artifact@v4
-        with:
-          name: archlinuxarm-rpi4-aarch64-sdcard-img
-          path: "*.img"
-          retention-days: 30
       
       - name: Upload Gzipped Image
         uses: actions/upload-artifact@v4
@@ -125,7 +118,6 @@ jobs:
           tag_name: "v${{ env.TIMESTAMP }}"
           name: "Arch Linux RPi4 AArch64 - ${{ env.TIMESTAMP }}"
           files: |
-            *.img
             *.img.gz
             *.img.zip
             *.img.zst
