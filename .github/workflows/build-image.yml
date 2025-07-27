@@ -1,15 +1,16 @@
 on:
-  workflow_dispatch:
   schedule:
     - cron: '0 0 10 * *' 
+  workflow_dispatch:
 
 jobs:
   build:
     name: Build RPi4 AArch64 Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
       - name: Install prerequisites
         run: |
           sudo apt update
