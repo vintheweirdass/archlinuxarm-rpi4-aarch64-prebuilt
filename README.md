@@ -7,15 +7,9 @@ I made this repository because I have a pain repartitioning and flashing the Arc
 ## Downloading
 
 1. Download one of the Image (that contains `sdcard.img` on the compressed files) from the [Releases](https://github.com/vintheweirdass/archlinuxarm-rpi4-aarch64-prebuilt) page.
-   > The `.zst` ([Zstandard](https://github.com/facebook/zstd)) version only for more-compressed version.
-   > Useful if your internet isn't strong enough to download the raw image or the normal compressed version. 
+   > The `.zst` ([Zstandard](https://github.com/facebook/zstd)) is very powerful since it compresses more than the normal `.zip` or `.gz` files
    >
    > Needs an [external program provided by Facebook](https://github.com/facebook/zstd/releases)
-   >
-   > The `.zip` and `.gz` are the normal compressed version.
-   >
-   > Natively, Windows can only extract `.zip`. While on Linux you can only extract `.gz`.
-   > Both can extract other unsupported compressed files using external app
 
 2. Unzip the file you have downloaded until the file format is not `.zip`, `.gz`, `.zst`, or other compressed format
 
