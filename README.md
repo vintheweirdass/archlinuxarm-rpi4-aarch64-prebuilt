@@ -6,7 +6,7 @@ I made this repository because I have a pain repartitioning and flashing the Arc
 
 ## Downloading
 
-1. Download one of the Image (that contains `sdcard.img` on the compressed files) from the [Releases](https://github.com/vintheweirdass/archlinuxarm-rpi4-aarch64-prebuilt) page.
+1. Download one of the Image with the `.zst` format from the [Releases](https://github.com/vintheweirdass/archlinuxarm-rpi4-aarch64-prebuilt) page.
    > The `.zst` ([Zstandard](https://github.com/facebook/zstd)) is very powerful since it compresses more than the normal `.zip` or `.gz` files
    >
    > Needs an [external program provided by Facebook](https://github.com/facebook/zstd/releases)
