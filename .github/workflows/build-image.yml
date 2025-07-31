@@ -87,6 +87,7 @@ jobs:
           # Set output variables for artifact upload
           echo "IMG_NAME=${IMG_NAME}" >> $GITHUB_ENV
           echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
+          echo "TIMESTAMP_IMG_NAME=${TIMESTAMP_IMG_NAME}" >> $GITHUB_ENV
           
       - name: Upload Zstd-zipped Image
         uses: actions/upload-artifact@v4
