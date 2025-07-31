@@ -38,7 +38,8 @@ jobs:
           
           # Generate timestamp
           TIMESTAMP=$(date +%Y-%m-%d)
-          IMG_NAME="archlinuxarm-rpi4-aarch64-${TIMESTAMP}-sdcard.img"
+          TIMESTAMP_IMG_NAME=$(date +%Y_%m_%d)
+          IMG_NAME="archlinuxarm-rpi4-aarch64-${TIMESTAMP_IMG_NAME}-sdcard.img"
           
           # Create and partition image
           fallocate -l 8G "$IMG_NAME"
