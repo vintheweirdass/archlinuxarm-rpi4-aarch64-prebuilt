@@ -11,6 +11,5 @@ I made this repository because I have a pain repartitioning and flashing the Arc
    >
    > Needs an [external program provided by Facebook](https://github.com/facebook/zstd/releases)
 
-2. Unzip the file you have downloaded until the file format is not `.zip`, `.gz`, `.zst`, or other compressed format
-
+2. Unzip the file you have downloaded until the file extension is not `.zst`
 3. Voilà! Now you can use the file (`.img`) to the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)!
