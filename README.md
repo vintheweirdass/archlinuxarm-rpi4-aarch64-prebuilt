@@ -1,3 +1,5 @@
+CAUTION! THE EXTRACTED FILE OF THE IMAGE WAS MORE THAN 8GB, CHECK YOUR STORAGE FREE SPACE SO YOU CAN DOWNLOAD THE COMPRESSED FILE
+
 # Arch Linux ARM 64-bit version for RPi4
 
 This is a prebuilt version of [ArchLinuxARM](https://archlinuxarm.org/) 64-bit version (AArchv8) for Raspberry Pi 4 using my [Github Action workflow file](https://github.com/vintheweirdass/archlinuxarm-rpi4-aarch64-prebuilt/actions/workflows/build-image.yml). 
