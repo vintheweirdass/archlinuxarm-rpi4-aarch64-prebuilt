@@ -30,8 +30,6 @@ jobs:
             parted \
             libarchive-tools \
             dosfstools \
-            gzip \
-            zip \
             zstd
       
       - name: Build Raspberry Pi4 AArch64 Image
@@ -83,27 +81,11 @@ jobs:
           
           # Create compressed versions
           echo "Creating compressed archives..."
-          gzip -k "$IMG_NAME"
-          zip "$IMG_NAME.zip" "$IMG_NAME"
-          zstd -6 -k "$IMG_NAME"
+          zstd -7 -k "$IMG_NAME"
           
           # Set output variables for artifact upload
           echo "IMG_NAME=${IMG_NAME}" >> $GITHUB_ENV
           echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
-      
-      - name: Upload Gzipped Image
-        uses: actions/upload-artifact@v4
-        with:
-          name: archlinuxarm-rpi4-aarch64-sdcard-gzip
-          path: "*.img.gz"
-          retention-days: 30
-      
-      - name: Upload Zipped Image  
-        uses: actions/upload-artifact@v4
-        with:
-          name: archlinuxarm-rpi4-aarch64-sdcard-zip
-          path: "*.img.zip"
-          retention-days: 30
           
       - name: Upload Zstd-zipped Image
         uses: actions/upload-artifact@v4
@@ -118,8 +100,6 @@ jobs:
           tag_name: "v${{ env.TIMESTAMP }}"
           name: "Arch Linux RPi4 AArch64 - ${{ env.TIMESTAMP }}"
           files: |
-            *.img.gz
-            *.img.zip
             *.img.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
