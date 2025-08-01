@@ -1,3 +1,5 @@
+name: Build Arch Linux ARM RPi4 AArch64 Image
+
 on:
   workflow_dispatch:
     inputs:
@@ -7,7 +9,7 @@ on:
         default: false
         type: boolean
   schedule:
-    - cron: '0 0 10 * *'
+    - cron: '0 0 */10 * *'
 
 jobs:
   build:
@@ -30,64 +32,14 @@ jobs:
             parted \
             libarchive-tools \
             dosfstools \
-            zstd
-      
-      - name: Build Raspberry Pi4 AArch64 Image
+            e2fsprogs \
+            zstd \
+            wget
+
+      - name: Run script
         run: |
-          set -euxo pipefail
-          
-          # Generate timestamp
-          TIMESTAMP=$(date +%Y-%m-%d)
-          TIMESTAMP_IMG_NAME=$(date +%Y_%m_%d)
-          IMG_NAME="archlinuxarm-rpi4-aarch64-${TIMESTAMP_IMG_NAME}-sdcard.img"
-          
-          # Create and partition image
-          fallocate -l 8G "$IMG_NAME"
-          parted "$IMG_NAME" --script mklabel msdos \
-            mkpart primary fat32 1MiB 501MiB \
-            mkpart primary ext4 501MiB 100%
-          
-          # Setup loop device
-          LOOP=$(sudo losetup --show -Pf "$IMG_NAME")
-          sudo mkfs.vfat "${LOOP}p1"
-          sudo mkfs.ext4 "${LOOP}p2"
-          
-          # Mount partitions
-          mkdir -p boot rootfs
-          sudo mount "${LOOP}p1" boot
-          sudo mount "${LOOP}p2" rootfs
-          
-          # Download and verify rootfs
-          echo "Downloading Arch Linux ARM rootfs..."
-          curl -fsSL http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz \
-            -o rootfs.tar.gz
-          
-          # Verify download succeeded
-          if [ ! -f rootfs.tar.gz ] || [ ! -s rootfs.tar.gz ]; then
-            echo "Failed to download rootfs"
-            exit 1
-          fi
-          
-          # Extract rootfs
-          sudo tar -xpf rootfs.tar.gz -C rootfs
-          sudo mv rootfs/boot/* boot/
-          
-          # Fix fstab for RPi (assuming SD card shows as mmcblk1)
-          sudo sed -i 's/mmcblk0/mmcblk1/g' rootfs/etc/fstab
-          
-          # Cleanup
-          sync
-          sudo umount boot rootfs || true
-          sudo losetup -d "$LOOP" || true
-          
-          # Create compressed versions
-          echo "Creating compressed archives..."
-          zstd -7 -k "$IMG_NAME"
-          
-          # Set output variables for artifact upload
-          echo "IMG_NAME=${IMG_NAME}" >> $GITHUB_ENV
-          echo "TIMESTAMP=${TIMESTAMP}" >> $GITHUB_ENV
-          echo "TIMESTAMP_IMG_NAME=${TIMESTAMP_IMG_NAME}" >> $GITHUB_ENV
+           chmod x+ ./scripts/build-image.sh
+           ./scripts/build-image.sh
           
       - name: Upload Zstd-zipped Image
         uses: actions/upload-artifact@v4
@@ -97,7 +49,7 @@ jobs:
           retention-days: 30
           
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ env.TIMESTAMP }}"
           name: "Arch Linux RPi4 AArch64 - ${{ env.TIMESTAMP }}"
@@ -105,4 +57,3 @@ jobs:
             *.img.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
